@@ -60,3 +60,26 @@ def delete_user(user_id):
     db.session.delete(userRes)
     db.session.commit()
     return jsonify({'result': True})
+
+
+
+@app.route('/remessa', methods=['GET'])
+def get_remessa():
+    if request.method == 'GET':
+        remessa = []
+        remessaRes = Remessa.query.all()
+        for re in remessaRes:
+            rem = {
+                'id': re.id,
+                'data': re.data,
+                'quantidade': re.qtde,
+                'status': re.status,
+                'vendidos': re.vendidos,
+                'pagos': re.pagos,
+                'usuario_id': re.usuario_id,
+                'local_id': re.local_id
+            }
+            remessa.append(rem)
+       
+        return jsonify({'remessas': remessa})
+
