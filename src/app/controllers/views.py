@@ -90,7 +90,6 @@ def get_remessa():
 
 @app.route('/remessa', methods=['POST'])
 def create_remessa():
-   
     rem = {
         'data': request.json['data'],
         'quantidade': request.json['quantidade'],
@@ -101,6 +100,7 @@ def create_remessa():
         'local_id': request.json['local_id']
             
     }
+
     data = rem['data']
     qtde = rem['quantidade']
     status = rem['status']
@@ -116,3 +116,31 @@ def create_remessa():
     db.session.commit()
 
     return jsonify({'remessa': rem}), 201
+
+
+@app.route('/usuario/<int:remessa_id>', methods=['PUT'])
+def update_remessa(remessa_id):
+    rem = {
+        'data': request.json['data'],
+        'quantidade': request.json['quantidade'],
+        'status': request.json['status'],
+        'vendidos': request.json['vendidos'],
+        'pagos': request.json['pagos'],
+        'usuario_id': request.json['usuario_id'],
+        'local_id': request.json['local_id']
+            
+    }
+    remessa = Remessa.query.filter_by(id=remessa_id).first_or_404()
+    if remessa == None:
+        abort(404)
+    remessa.data = rem['data']
+    remessa.qtde = rem['quantidade']
+    remessa.status = rem['status']
+    remessa.vendidos = rem['vendidos']
+    remessa.pagos = rem['pagos']
+    remessa.usuario_id = rem['usuario_id']
+    remessa.local_id = rem['local_id']
+
+    db.session.commit()
+
+    return jsonify({'remessa': rem}), 204
