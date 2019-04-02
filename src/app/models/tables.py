@@ -54,3 +54,15 @@ class Remessa(db.Model):
     pagos = db.Column(db.Integer)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     local_id = db.Column(db.Integer, db.ForeignKey('local.id'))
+
+    def __init__(self, data, qtde, status, vendidos, pagos, usuario_id, local_id):
+        self.data = data
+        self.qtde = qtde
+        self.status = status
+        self.vendidos = vendidos
+        self.pagos = usuario_id
+        self.usuario_id = usuario_id
+        self.local_id = local_id
+
+    def __repr__(self):
+        return "Remessa: {}".format(self.id)
