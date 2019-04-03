@@ -118,7 +118,7 @@ def create_remessa():
     return jsonify({'remessa': rem}), 201
 
 
-@app.route('/usuario/<int:remessa_id>', methods=['PUT'])
+@app.route('/remessa/<int:remessa_id>', methods=['PUT'])
 def update_remessa(remessa_id):
     rem = {
         'data': request.json['data'],
@@ -144,3 +144,69 @@ def update_remessa(remessa_id):
     db.session.commit()
 
     return jsonify({'remessa': rem}), 204
+
+@app.route('/remessa/<int:remessa_id>', methods=['DELETE'])
+def delete_remessa(remessa_id):
+    remessa = Remessa.query.filter_by(id=remessa_id).first_or_404()
+    if remessa == None:
+        abort(404)
+    db.session.delete(remessa)
+    db.session.commit()
+    return jsonify({'result': True})
+
+
+
+#Crud de local
+@app.route('/local', methods=['GET'])
+def get_local():
+    if request.method == 'GET':
+        locais = []
+        loc = Local.query.all()
+        for l in loc:
+            local = {
+                'id': l.id,
+                'descricao': l.descricao
+            }
+            locais.append(local)
+       
+        return jsonify({'locais': locais})
+
+
+@app.route('/local', methods=['POST'])
+def create_local():
+    local = {
+        'descricao': request.json['descricao']
+    }
+    descricao = local['descricao']
+    #print('UserName {}'.format(username))
+    l = Local(descricao)
+
+    db.session.add(l)
+    db.session.commit()
+
+    return jsonify({'local': local}), 201
+
+
+@app.route('/local/<int:local_id>', methods=['PUT'])
+def update_local(local_id):
+    local = {
+        'descricao': request.json['descricao']
+    }
+    loc = Local.query.filter_by(id=local_id).first_or_404()
+    if loc == None:
+        abort(404)
+    loc.descricao = local['descricao']
+
+    db.session.commit()
+
+    return jsonify({'local': local}), 204
+
+
+@app.route('/local/<int:local_id>', methods=['DELETE'])
+def delete_local(local_id):
+    local = Local.query.filter_by(id=local_id).first_or_404()
+    if local == None:
+        abort(404)
+    db.session.delete(local)
+    db.session.commit()
+    return jsonify({'result': True})
