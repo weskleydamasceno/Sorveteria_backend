@@ -70,6 +70,7 @@ def delete_user(user_id):
 @app.route('/remessa', methods=['GET'])
 def get_remessa():
     if request.method == 'GET':
+        #print(request.args['id'])
         remessa = []
         remessaRes = Remessa.query.all()
         for re in remessaRes:
