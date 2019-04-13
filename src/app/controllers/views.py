@@ -211,3 +211,24 @@ def delete_local(local_id):
     db.session.delete(local)
     db.session.commit()
     return jsonify({'result': True})
+
+@app.route("/remessa/filtro", methods=['GET'])
+def get_remessa_filtrada():
+    dataInicial = request.args['dataInicial']
+    dataFinal = request.args['dataFinal']
+    remessa = []
+    remessaPeriodo = Remessa.query.filter(Remessa.data.between(dataInicial, dataFinal))
+    for r in remessaPeriodo:
+        rem = {
+            'id': r.id,
+            'data': r.data,
+            'quantidade': r.qtde,
+            'status': r.status,
+            'vendidos': r.vendidos,
+            'pagos': r.pagos,
+            'usuario_id': r.usuario_id,
+            'local_id': r.local_id
+        }
+        remessa.append(rem)
+
+    return jsonify({'remessas': remessa})
