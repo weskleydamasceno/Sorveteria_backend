@@ -6,6 +6,7 @@ import os
 from os.path import abspath
 
 DEBUG = True
+SECRET_KEY = 'a secret key'
 
 # diretório base
 basedir = os.path.abspath(os.path.dirname(__name__))

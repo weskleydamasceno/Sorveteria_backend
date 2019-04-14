@@ -1,9 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_login import LoginManager
 
 app = Flask(__name__)
+
 CORS(app)
+
+login_manager = LoginManager(app)
 
 # instância de conexão com o banco
 db = SQLAlchemy(app)

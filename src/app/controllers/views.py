@@ -1,7 +1,36 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, session
 from app import app, db
 from app.models.tables import Usuario, Remessa, Local
+from flask_login import login_user, logout_user
+from passlib.hash import sha256_crypt
+from app.controllers import default
 
+
+# Login do usuário
+@app.route("/login", methods=['POST'])
+def login():
+    u = {
+        'username': request.json['username'],
+        'senha' : request.json['senha']
+    }
+    user = Usuario.query.filter_by(username=u['username']).first()
+    if user and sha256_crypt.verify(u['senha'], user.senha):
+        login_user(user)
+        # Cria sessão do usuário
+        session['logged_in'] = True
+        session['user'] = user.username
+    
+    return jsonify(session['user'])
+
+# Logout do usuário
+@app.route("/logout", methods=['GET'])
+def logout():
+    logout_user()
+    # Remove o usuário da sessão
+    session.pop('user', None)
+    session['logged_out'] = False
+    session.clear()
+    return jsonify({'result': True})
 
 #Crud de Usuario
 @app.route('/usuario', methods=['GET'])
@@ -27,7 +56,7 @@ def create_user():
         'senha': request.json['senha']
     }
     username = user['username']
-    senha = user['senha']
+    senha = sha256_crypt.encrypt(str(user['senha']))
     #print('UserName {}'.format(username))
     u = Usuario(username, senha)
 
