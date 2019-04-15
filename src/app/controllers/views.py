@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, abort, session
 from app import app, db
 from app.models.tables import Usuario, Remessa, Local
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from passlib.hash import sha256_crypt
 from app.controllers import default
 
@@ -13,14 +13,17 @@ def login():
         'username': request.json['username'],
         'senha' : request.json['senha']
     }
+    if current_user.is_authenticated:
+        return jsonify('Usuário já está logado')
     user = Usuario.query.filter_by(username=u['username']).first()
     if user and sha256_crypt.verify(u['senha'], user.senha):
         login_user(user)
         # Cria sessão do usuário
         session['logged_in'] = True
         session['user'] = user.username
-    
-    return jsonify(session['user'])
+        return jsonify(session['logged_in'])
+    else:
+        return jsonify('Error!'), 404
 
 # Logout do usuário
 @app.route("/logout", methods=['GET'])
